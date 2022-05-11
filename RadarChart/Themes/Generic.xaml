@@ -1,0 +1,112 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:RadarChart">
+    <Style TargetType="local:Radar">
+        <Style.Resources>
+            <LinearGradientBrush x:Key="radarcolor" 
+                                 StartPoint="0,0" 
+                                 EndPoint="0,1">
+                <GradientStop Offset="0" Color="#FF4166D7" />
+                <GradientStop Offset="0.5" Color="Transparent" />
+            </LinearGradientBrush>
+        </Style.Resources>
+        <Setter Property="RadarColor" Value="{DynamicResource radarcolor}" />
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <Canvas IsItemsHost="True"/>
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="MinHeight" Value="10" />
+        <Setter Property="MinWidth" Value="10" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type local:Radar}">
+                    <Grid x:Name="grid"   >
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="2*"/>
+                            <RowDefinition Height="2*"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="2*"/>
+                        </Grid.ColumnDefinitions>
+                        <ItemsControl Grid.ColumnSpan="2" Grid.RowSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center" x:Name="ic"  ItemsSource="{TemplateBinding RadarCircle }">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <Grid IsItemsHost="True"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Ellipse Width="{Binding  Width}"
+                                             Height="{Binding Height}" 
+                                             StrokeThickness="{Binding StrokeThickness}"
+                                             Stroke="{Binding Color}"
+                                             StrokeDashArray="{Binding StrokeDashArray}"/>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <ItemsControl Grid.ColumnSpan="2" Grid.RowSpan="2"  VerticalAlignment="Center" HorizontalAlignment="Center"  x:Name="ic2"   ItemsSource="{TemplateBinding RadarLine }">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <Grid IsItemsHost="True"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Line X1="{Binding Start.X}" Y1="{Binding Start.Y}" X2="{Binding End.X}" Y2="{Binding End.Y}"  Stroke="{Binding Color}"/>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <ItemsPresenter Grid.ColumnSpan="2" Grid.RowSpan="2"  Width="{TemplateBinding RadarFillWidth}" Height="{TemplateBinding RadarFillWidth}"  />
+                        <Ellipse Fill="{TemplateBinding RadarColor}"   Grid.ColumnSpan="2" Grid.RowSpan="2"  
+                                 x:Name="ep" RenderTransformOrigin="0.5,0.5" Width="{TemplateBinding RadarFillWidth}" Height="{TemplateBinding RadarFillWidth}">
+                            <Ellipse.RenderTransform>
+                                <RotateTransform x:Name="rtf" />
+                            </Ellipse.RenderTransform>
+                        </Ellipse>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Play" Value="True">
+                            <Trigger.EnterActions>
+                                <BeginStoryboard  x:Name="bs" >
+                                    <Storyboard >
+                                        <DoubleAnimation Storyboard.TargetName="rtf" 
+                                                         Storyboard.TargetProperty="Angle"  
+                                                         From="0" To="360" Duration="0:0:2" 
+                                                         RepeatBehavior="Forever"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
+                        </Trigger>
+                        <Trigger Property="Play" Value="False">
+                            <Trigger.EnterActions>
+                                <RemoveStoryboard BeginStoryboardName="bs"/>
+                            </Trigger.EnterActions>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style TargetType="local:RadarItem">
+        <Setter Property="VerticalAlignment" Value="Top" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Margin" Value="0" />
+        <Setter Property="Canvas.Top" Value="{Binding RelativeSource={RelativeSource Mode=Self},Path=Top}" />
+        <Setter Property="Canvas.Left" Value="{Binding RelativeSource={RelativeSource Mode=Self},Path=Left}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:RadarItem">
+                    <Border  >
+                        <Ellipse Width="{TemplateBinding Width}" Height="{TemplateBinding Height}" Fill="{TemplateBinding Color}" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>
